@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
+    private val adapter = StockAdapter()
     private val disposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,29 +27,32 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         listView.layoutManager = LinearLayoutManager(this)
+        listView.adapter = adapter
+
+        val BASF = Subscribe("DE000BASF111")
+        val SIEMENS = Subscribe("DE0007236101")
 
         val tradeService = TradeService.create()
-        val BASF_SUBSCRIBE = Subscribe("DE000BASF111")
-
         tradeService.observeWebSocketEvent()
             .filter { it is WebSocket.Event.OnConnectionOpened<*> }
-            .subscribe { tradeService.sendSubscribe(BASF_SUBSCRIBE) }
+            .subscribe {
+                tradeService.sendSubscribe(BASF)
+                tradeService.sendSubscribe(SIEMENS)
+            }
             .addTo(disposable)
 
         tradeService.observeStock()
             .subscribeOn(Schedulers.computation())
+            .throttleFirst(500, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged { t1, t2 -> t1.isin == t2.isin }
+            .buffer(2)
             .observeOn(AndroidSchedulers.mainThread())
-            .throttleFirst(1, TimeUnit.SECONDS)
             .subscribe(::handleResult, ::handleError)
             .addTo(disposable)
     }
 
-    private fun handleResult(stock: Stock) {
-        val stocks = listOf(stock)
-        val adapter = StockAdapter(stocks)
-        listView.adapter = adapter
-
-        Log.d("STOCK_OBSERVER", "Stock price is ${stock.price}")
+    private fun handleResult(stocks: List<Stock>) {
+        adapter.stocks = stocks
     }
 
     private fun handleError(error: Throwable) {

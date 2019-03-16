@@ -13,14 +13,21 @@
             android:focusable="true"
             android:layout_margin="5dp">
 
-        <RelativeLayout
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="20dp">
 
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:maxLines="1"
+                      android:ellipsize="end"
+                      android:text="@{item.isin}"
+                      android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
+                      tools:text="DE000BASF111"/>
+
             <TextView
-                    android:id="@+id/title"
-                    android:transitionName="item_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
@@ -30,6 +37,6 @@
                     android:text="@{@string/formated_price(item.price)}"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                     tools:text="Price: $14.50" />
-        </RelativeLayout>
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 </layout>

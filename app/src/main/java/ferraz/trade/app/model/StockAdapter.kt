@@ -5,8 +5,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import ferraz.trade.app.api.model.Stock
 import ferraz.trade.app.databinding.ListItemBinding
+import kotlin.properties.Delegates
 
-class StockAdapter(val data: List<Stock>): RecyclerView.Adapter<StockAdapter.StockViewHolder>() {
+class StockAdapter(): RecyclerView.Adapter<StockAdapter.StockViewHolder>(), AutoUpdatableAdapter {
+
+    var stocks: List<Stock> by Delegates.observable(emptyList()) {
+            prop, old, new ->
+        autoNotify(old, new) { o, n -> o.isin == n.isin }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -15,8 +21,8 @@ class StockAdapter(val data: List<Stock>): RecyclerView.Adapter<StockAdapter.Sto
         return StockViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = data.size
-    override fun onBindViewHolder(holder: StockViewHolder, position: Int) =  holder.bind(data[position])
+    override fun getItemCount(): Int = stocks.size
+    override fun onBindViewHolder(holder: StockViewHolder, position: Int) =  holder.bind(stocks[position])
 
     inner class StockViewHolder(private val binding: ListItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Stock) {
