@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WebSocket Demo</string>
+    <string name="formated_price">Price: $%.1f</string>
 </resources>
