@@ -7,7 +7,7 @@ import ferraz.trade.app.api.model.Stock
 import ferraz.trade.app.databinding.ListItemBinding
 import kotlin.properties.Delegates
 
-class StockAdapter(): RecyclerView.Adapter<StockAdapter.StockViewHolder>(), AutoUpdatableAdapter {
+class StockAdapter: RecyclerView.Adapter<StockAdapter.StockViewHolder>(), AutoUpdatableAdapter {
 
     var stocks: List<Stock> by Delegates.observable(emptyList()) {
             prop, old, new ->

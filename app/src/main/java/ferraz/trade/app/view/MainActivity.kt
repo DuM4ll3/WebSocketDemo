@@ -15,6 +15,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    /*
+     * Not doing DI here, but in a production app Dagger or other DI framework could be used
+     */
     private val viewModel = MainViewModel()
     private val adapter = StockAdapter()
     private val disposable = CompositeDisposable()
@@ -26,10 +29,16 @@ class MainActivity : AppCompatActivity() {
         listView.layoutManager = LinearLayoutManager(this)
         listView.adapter = adapter
 
+        /*
+         * subscribe to the stream of events
+         */
         viewModel.observeStream()
             .subscribe(::handleResult, ::handleError)
             .addTo(disposable)
 
+        /*
+         * adds a new stock to the stream
+         */
         actionButton.setOnClickListener { addStock() }
     }
 
