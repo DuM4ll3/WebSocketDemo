@@ -5,14 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import ferraz.trade.app.api.model.Stock
 import ferraz.trade.app.databinding.ListItemBinding
-import kotlin.properties.Delegates
 
-class StockAdapter: RecyclerView.Adapter<StockAdapter.StockViewHolder>(), AutoUpdatableAdapter {
-
-    var stocks: List<Stock> by Delegates.observable(emptyList()) {
-            prop, old, new ->
-        autoNotify(old, new) { o, n -> o.isin == n.isin }
-    }
+class StockAdapter(private  val stocks: List<Stock>): RecyclerView.Adapter<StockAdapter.StockViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

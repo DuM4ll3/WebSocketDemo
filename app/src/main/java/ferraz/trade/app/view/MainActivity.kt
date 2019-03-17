@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
      * Not doing DI here, but in a production app Dagger or other DI framework could be used
      */
     private val viewModel = MainViewModel()
-    private val adapter = StockAdapter()
     private val disposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         listView.layoutManager = LinearLayoutManager(this)
-        listView.adapter = adapter
 
         /*
          * subscribe to the stream of events
@@ -43,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleResult(stocks: List<Stock>) {
-        adapter.stocks = stocks
+        listView.adapter = StockAdapter(stocks)
     }
 
     private fun handleError(error: Throwable) {
