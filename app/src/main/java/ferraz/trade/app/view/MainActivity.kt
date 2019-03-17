@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleResult(stocks: List<Stock>) {
         adapter.stocks = stocks
-        Log.d("STOCKS", "${stocks.size}")
     }
 
     private fun handleError(error: Throwable) {

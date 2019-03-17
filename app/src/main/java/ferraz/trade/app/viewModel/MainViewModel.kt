@@ -23,12 +23,14 @@ class MainViewModel(private val tradeService: TradeService = TradeService.create
     init {
         val BASF = Subscribe("DE000BASF111")
         val BAYER = Subscribe("DE000BAY0017")
+        val SIEMENS = Subscribe("DE0007236101")
 
         tradeService.observeWebSocketEvent()
             .filter { it is WebSocket.Event.OnConnectionOpened<*> }
             .subscribe {
                 tradeService.sendSubscribe(BASF)
                 tradeService.sendSubscribe(BAYER)
+                tradeService.sendSubscribe(SIEMENS)
             }
             .addTo(disposable)
     }
@@ -40,9 +42,12 @@ class MainViewModel(private val tradeService: TradeService = TradeService.create
     override fun observeStream(): Flowable<List<Stock>> {
         return tradeService.observeStock()
             .subscribeOn(Schedulers.computation())
-            .throttleFirst(500, TimeUnit.MILLISECONDS)
+            .buffer(1, TimeUnit.SECONDS)
+            .flatMapIterable { it }
             .distinctUntilChanged { t1, t2 -> t1.isin == t2.isin }
-            .buffer(2)
+            .distinct()
+            .buffer(3)
+            .map { it.sortedBy { it.isin } }
             .observeOn(AndroidSchedulers.mainThread())
     }
 }
